@@ -1,0 +1,9 @@
+﻿@model IEnumerable<ASP_MVC5_Project.Models.Auction>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+@foreach (var item in Model)
+{
+    @Html.Partial("_AuctionTile", item)
+}
