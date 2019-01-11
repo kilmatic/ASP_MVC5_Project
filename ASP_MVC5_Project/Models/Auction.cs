@@ -9,6 +9,8 @@ namespace ASP_MVC5_Project.Models
     {
         public long id { get; set; }
 
+        public string Category { get; set; }
+
         public string Title { get; set; }
         public string Description { get; set; }
         public string ImageUrl { get; set; }
@@ -17,6 +19,6 @@ namespace ASP_MVC5_Project.Models
         public DateTime EndTime { get; set; }
 
         public decimal StartPrice { get; set; }
-        public decimal? CurrentPrice { get; set; }
+        public decimal CurrentPrice { get; set; }
     }
 }

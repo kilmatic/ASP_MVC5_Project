@@ -20,7 +20,7 @@ namespace ASP_MVC5_Project.Controllers
                     StartTime = DateTime.Now,
                     EndTime = DateTime.Now.AddDays(7),
                     StartPrice = 1.00m,
-                    CurrentPrice = null,
+                    CurrentPrice = 0,
                 },
                 new Models.Auction()
                 {
@@ -52,7 +52,7 @@ namespace ASP_MVC5_Project.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult Auction()
+        public ActionResult Auction(long id)
         {
             var auction = new ASP_MVC5_Project.Models.Auction()
             {
@@ -61,10 +61,16 @@ namespace ASP_MVC5_Project.Controllers
                 StartTime = DateTime.Now,
                 EndTime = DateTime.Now.AddDays(7),
                 StartPrice = 1.00m,
-                CurrentPrice = null,
+                CurrentPrice = 0,
             };
 
             return View(auction);
+        }
+        public ActionResult Create([Bind(Exclude = "CurrentPrice")]Models.Auction auction)
+        {
+            var categoryList = new SelectList(new [] { "Automotive", "Electronics", "Games", "Home" });
+            ViewBag.CategoryList = categoryList;
+            return View();
         }
     }
 }
