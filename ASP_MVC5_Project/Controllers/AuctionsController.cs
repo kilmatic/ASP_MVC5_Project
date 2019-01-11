@@ -20,7 +20,7 @@ namespace ASP_MVC5_Project.Controllers
                     StartTime = DateTime.Now,
                     EndTime = DateTime.Now.AddDays(7),
                     StartPrice = 1.00m,
-                    CurrentPrice = 0,
+                    CurrentPrice = null,
                 },
                 new Models.Auction()
                 {
@@ -61,16 +61,40 @@ namespace ASP_MVC5_Project.Controllers
                 StartTime = DateTime.Now,
                 EndTime = DateTime.Now.AddDays(7),
                 StartPrice = 1.00m,
-                CurrentPrice = 0,
+                CurrentPrice = null,
             };
 
             return View(auction);
         }
-        public ActionResult Create([Bind(Exclude = "CurrentPrice")]Models.Auction auction)
+
+        [HttpGet]
+        public ActionResult Create()
         {
-            var categoryList = new SelectList(new [] { "Automotive", "Electronics", "Games", "Home" });
+            var categoryList = new SelectList(new[] { "Automotive", "Electronics", "Games", "Home" });
             ViewBag.CategoryList = categoryList;
             return View();
+        }
+
+        [HttpPost]
+        public ActionResult Create([Bind(Exclude = "CurrentPrice")]Models.Auction auction)
+        {
+
+            if (string.IsNullOrWhiteSpace(auction.Title))
+            {
+                ModelState.AddModelError("Title", "Title is required");
+            }
+            else if (auction.Title.Length < 5 || auction .Title.Length > 200)
+            {
+                ModelState.AddModelError("Title", "Title must be between 5 and 200 characters long");
+            }
+
+            if (ModelState.IsValid)
+            {
+                //Save to the database
+                return RedirectToAction("Index");
+            }
+
+            return Create();
         }
     }
 }
