@@ -40,7 +40,7 @@ namespace ASP_MVC5_Project.Controllers
             ViewBag.CategoryList = categoryList;
             return View();
         }
-
+        
         [HttpPost]
         public ActionResult Create([Bind(Exclude = "CurrentPrice")]Models.Auction auction)
         {
