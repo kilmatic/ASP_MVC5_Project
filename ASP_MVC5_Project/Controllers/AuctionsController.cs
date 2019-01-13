@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -33,6 +34,34 @@ namespace ASP_MVC5_Project.Controllers
             return View(auction);
         }
 
+        [HttpPost]
+        public ActionResult Bid(Bid bid)
+        {
+            var db = new AuctionsDataContext();
+            var auction = db.Auctions.Find(bid.AuctionId);
+
+            if (auction == null)
+            {
+                ModelState.AddModelError("AuctionId", "Auction not found!");
+            }
+            else if (auction.CurrentPrice >= bid.Amount)
+            {
+                ModelState.AddModelError("Amount", "Bid amount must exceed currnt bid");
+            }
+            else
+            {
+                bid.Username = User.Identity.Name;
+                auction.Bids.Add(bid);
+                auction.CurrentPrice = bid.Amount;
+                db.SaveChanges();
+            }
+
+            if (!Request.IsAjaxRequest())
+                return RedirectToAction("Action", new { id = bid.AuctionId });
+
+            return PartialView("_CurrentPrice", auction);
+        }
+
         [HttpGet]
         public ActionResult Create()
         {
@@ -40,7 +69,7 @@ namespace ASP_MVC5_Project.Controllers
             ViewBag.CategoryList = categoryList;
             return View();
         }
-        
+
         [HttpPost]
         public ActionResult Create([Bind(Exclude = "CurrentPrice")]Models.Auction auction)
         {

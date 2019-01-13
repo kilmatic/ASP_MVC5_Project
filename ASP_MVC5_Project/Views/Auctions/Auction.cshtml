@@ -1,7 +1,9 @@
 ﻿@model ASP_MVC5_Project.Models.Auction
-@{ 
+@{
     var auction = Model;
 }
+
+@Html.ActionLink("Login", "Login", "Account")
 
 <div class="auction">
     <h3>@auction.Title</h3>
@@ -15,7 +17,8 @@
             see if it has a value before we call .ToString()!
         *@
 
-        <p>Current Price:
+        <p>
+            Current Price:
             @if (auction.CurrentPrice == null)
             {
                 @: [No bids]
@@ -23,6 +26,7 @@
             else
             {
                 <span>@auction.CurrentPrice.Value.ToString("C")</span>
+                <span>[@auction.BidCount bids]</span>
             }
 
         </p>
@@ -36,7 +40,7 @@
                     @Html.ValidationMessage("amount")
                 </span>
 
-                @Html.Hidden("auctionId", auction.id)
+                @Html.Hidden("auctionId", auction.Id)
 
                 <input class="post-bid" type="submit" value="Bid" />
             }
@@ -46,9 +50,42 @@
     @if (auction.ImageUrl != null)
     {
         <img src="@auction.ImageUrl" title="@auction.Title" />
-        }
+    }
 
     <div class="description">
         @auction.Description
     </div>
 </div>
+
+<script id="current-price-template" type="application/html-template">
+    <p class="current-price">
+        <span>Current Price: {{CurrentPrice}}</span>
+        <span>[{{BidCount}} bids]</span>
+    </p>
+</script>
+
+
+
+@section Scripts {
+    <script type="text/javascript">
+        $(function () {
+            $('.post-bid').on("click", function () {
+
+                var form = $(this).parent("form");
+
+                $.ajax({
+                    type: "POST",
+                    url: form.attr('action'),
+                    data: form.serialize()
+                })
+                    .success(function (html) {
+                        $('.current-price').replaceWith(html);
+                    })
+                    .error(function () {
+                        alert("Your bid has been rejected");
+                    });
+
+                return false;
+            });
+        });
+    </script>
